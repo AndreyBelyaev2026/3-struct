@@ -1,31 +1,63 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 )
 
 type Bin struct {
-	ID        string    `json:"id"`
-	Private   bool      `json:"private"`
-	CreatedAt time.Time `json:"createdAt"`
-	Name      string    `json:"name"`
+	ID        string
+	Private   bool
+	CreatedAt time.Time
+	Name      string
 }
 
-func CheckErrors(err error) {
+// Структура BinList — список или коллекция Bin
+type BinList struct {
+	Bins []Bin
+}
+
+// Функция для создания нового Bin
+func NewBin(id string, private bool, createdAtStr string, name string) Bin {
+	// парсим строку даты
+	t, err := time.Parse("2006-01-02T15:04:05-07:00", createdAtStr)
 	if err != nil {
 		fmt.Println("Ошибка:", err)
 	}
+
+	return Bin{
+		ID:        id,
+		Private:   private,
+		CreatedAt: t,
+		Name:      name,
+	}
+}
+
+// Функция для создания нового BinList
+func NewBinList() *BinList {
+	return &BinList{
+		Bins: []Bin{},
+	}
+}
+
+// Метод для добавления Bin в BinList
+func (bl *BinList) AddBin(bin Bin) {
+	bl.Bins = append(bl.Bins, bin)
 }
 
 func main() {
-	binList := []byte(`{"id": "12345abcde", "private": true, "createdAt": "2024-04-27T15:34:56+03:00", "name": "Пример объекта"}`)
+	// binList := []byte(`{"id": "12345abcde", "private": true, "createdAt": "2024-04-27T15:34:56+03:00", "name": "Пример объекта"}`)
 
-	var bin Bin
+	// Создаем новый Bin
+	bin1 := NewBin("12345abcde", true, "2024-04-27T15:34:56+03:00", "Пример объекта 1")
+	bin2 := NewBin("67890fghij", false, "2024-04-27T15:34:56+03:00", "Пример объекта 2")
 
-	CheckErrors(json.Unmarshal(binList, &bin))
+	// Создаем список Bin
+	binList := NewBinList()
 
-	fmt.Println("Структура:", bin)
+	// Добавляем Bin в список
+	binList.AddBin(bin1)
+	binList.AddBin(bin2)
 
+	fmt.Println(binList)
 }
